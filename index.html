@@ -633,7 +633,7 @@ const S = {
       if (p.dtel_veic)      localStorage.setItem('dtel_veic',      JSON.stringify(p.dtel_veic));
       if (p.dtel_maccs)     localStorage.setItem('dtel_maccs',     JSON.stringify(p.dtel_maccs));
       if (p.dtel_master)    localStorage.setItem('dtel_master',    JSON.stringify(p.dtel_master));
-      if (p.dtel_cl)        localStorage.setItem('dtel_cl',        JSON.stringify(p.dtel_cl));
+      if (p.dtel_cl && p.dtel_cl.length > 0) localStorage.setItem('dtel_cl', JSON.stringify(p.dtel_cl));
       // Planos: merge de objetos
       if (p.dtel_nc_planos) localStorage.setItem('dtel_nc_planos', JSON.stringify({...S.get('dtel_nc_planos',{}), ...p.dtel_nc_planos}));
 
@@ -694,7 +694,7 @@ const CL_DEFAULT = [
   {id:'vazamento',  icon:'💧', name:'Vazamentos (Óleo/Fluido)'},
 ];
 
-function getCL()  { const s = S.get('dtel_cl', null); return s || CL_DEFAULT; }
+function getCL()  { const s = S.get('dtel_cl', null); return (s && s.length > 0) ? s : CL_DEFAULT; }
 function saveCL(a){ S.set('dtel_cl', a); }
 
 // ── INIT ─────────────────────────────────────────────────────────
@@ -717,7 +717,7 @@ async function initDefaults() {
       localStorage.setItem('dtel_veic',      JSON.stringify(remoto.dtel_veic      || []));
       localStorage.setItem('dtel_reg',       JSON.stringify(remoto.dtel_reg       || []));
       localStorage.setItem('dtel_lav',       JSON.stringify(remoto.dtel_lav       || []));
-      localStorage.setItem('dtel_cl',        JSON.stringify(remoto.dtel_cl        || []));
+      if (remoto.dtel_cl && remoto.dtel_cl.length > 0) localStorage.setItem('dtel_cl', JSON.stringify(remoto.dtel_cl));
       localStorage.setItem('dtel_nc_planos', JSON.stringify(remoto.dtel_nc_planos || {}));
       localStorage.setItem('dtel_lav_hist',  JSON.stringify(remoto.dtel_lav_hist  || []));
       temDadosNuvem = true;
