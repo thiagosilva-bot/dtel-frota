@@ -234,8 +234,8 @@ input::placeholder{color:rgba(255,255,255,.26);}
   <div class="login-box">
     <img class="login-logo-img" id="loginLogoImg" src="" alt="DTEL Telecom">
     <div class="login-title">ACESSO AO SISTEMA</div>
-    <div class="lf"><label>Usuário</label><input id="loginUser" type="text" placeholder="Digite seu usuário" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()"></div>
-    <div class="lf"><label>Senha</label><input id="loginPass" type="password" placeholder="Digite sua senha" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="lf"><label>Usuário</label><input id="loginUser" type="text" placeholder="Digite seu usuário" autocomplete="username" autocorrect="off" autocapitalize="none" spellcheck="false" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="lf"><label>Senha</label><div style="position:relative;display:flex;align-items:center;"><input id="loginPass" type="password" placeholder="Digite sua senha" autocomplete="current-password" autocorrect="off" autocapitalize="none" spellcheck="false" onkeydown="if(event.key==='Enter')doLogin()" style="flex:1;padding-right:44px"><button type="button" onclick="var i=document.getElementById('loginPass');i.type=i.type==='password'?'text':'password';this.textContent=i.type==='password'?'👁':'🙈'" style="position:absolute;right:6px;background:none;border:none;cursor:pointer;font-size:1.1rem;padding:4px;color:rgba(255,255,255,.6)">👁</button></div></div>
     <div id="loginError"></div>
     <button class="btn-login" onclick="doLogin()">🔐 ENTRAR</button>
   </div>
@@ -567,14 +567,18 @@ function initDefaults() {
 let CU = null;
 
 function doLogin() {
-  const login = document.getElementById('loginUser').value.trim().toLowerCase();
-  const pass  = document.getElementById('loginPass').value;
+  const login = document.getElementById('loginUser').value.trim().toLowerCase().replace(/\s+/g,'');
+  const pass  = document.getElementById('loginPass').value.trim();
   const master = S.get('dtel_master', {});
   let user = null;
-  if (login === master.login && pass === master.pass)
+  const mLogin = (master.login||'').trim().toLowerCase();
+  const mPass  = (master.pass||'').trim();
+  if (login === mLogin && pass === mPass)
     user = {login: master.login, nome: 'Gestor Master', role: 'gestor', motNome: null};
   if (!user) {
-    const acc = S.get('dtel_maccs', []).find(a => a.login === login && a.pass === pass);
+    const acc = S.get('dtel_maccs', []).find(a =>
+      (a.login||'').trim().toLowerCase() === login && (a.pass||'').trim() === pass
+    );
     if (acc) user = {login: acc.login, nome: acc.motNome, role: 'motorista', motNome: acc.motNome};
   }
   if (!user) { document.getElementById('loginError').textContent = 'Usuário ou senha incorretos.'; return; }
